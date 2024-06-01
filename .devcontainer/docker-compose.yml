@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # Backend Server
+  myserver:
+    container_name: servercontainer
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../..:/workspaces:cached
+    #network_mode: service:mongodb
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    networks:
+     - backend
+
+
+  # Database
+  mongo:
+    container_name: dbcontainer
+    image: mongo:latest
+    restart: unless-stopped
+    volumes:
+      - mongodata:/data/db
+      # - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+      # - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+    ports:
+      - "27017:27017"
+    env_file: ../backend/.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    networks:
+      - backend
+
+  # Object Storage
+  minio:
+    container_name: obscontainer
+    image: quay.io/minio/minio:latest
+    command: server --console-address ":9090" /mnt/data
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /mnt/data/minio
+        target: /mnt/data
+      - type: bind
+        source: /etc/default/minio
+        target: /etc/config.env
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    env_file: ../backend/.env
+    environment:
+      MINIO_ROOT_USERNAME: ${MINIO_ROOT_USERNAME}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_SERVER_URL: ${MINIO_SERVER_URL}
+
+    networks:
+      - backend
+    
+
+volumes:
+  mongodata:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge
+
+
+
+
+  
