@@ -1,21 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const Minio = require('minio')
-const multer = require('multer')
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'myuploads/')
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, file.originalname)
-    }
-  })  
-const upload = multer({ storage: storage })
 const dotenv = require('dotenv')
 dotenv.config()
-
-
 
 const userRoute = require('./routes/user.route')
 const authRoute = require('./routes/auth.route')
@@ -45,48 +31,12 @@ app.use('/user', userRoute)
 app.use('/auth', authRoute)
 
 
-const minioClient = new Minio.Client({
-  endPoint: 'obscontainer',
-  port: 9000,
-  useSSL: false,
-  accessKey: 'MAf75fy6i1BqTMENKaDr',
-  secretKey: 'dg1GhxfN8otgrs1KinQQ2YcsiQSXyqxGpVkdJiHN',
-})
-
-try {
-    const bucket = minioClient.listBuckets()
-    bucket.then(function(bucketList){
-      console.log(bucketList)
-    })
-
-} catch (err) {
-    console.log(err.message)
-}
-
-
-async function uploadMinio(bucketName, objectName, filePath ){
-    await minioClient.fPutObject(bucketName, objectName, filePath, function(err){
-        if (err) return console.log(err)
-        console.log('Upload successed!')
-    })
-}
- 
-
-uploadMinio('hello', 'myfolde/mycustom.sh', '../.devcontainer/custom.sh')
-
 
 
 app.get('/', function(req, res) {
     res.status(200).json({"message":"Hello World!"})
 })
 
-app.post('/file', upload.single('file'),  function(req, res){
-    console.log(req.file)
-})
-
-app.post('/minio', function(req, res){
-
-})
 
 
 
