@@ -12,7 +12,7 @@ const minioClient = new Minio.Client({
 
 
 
-// Only Admin
+// Bucket Operations
 async function listAllBuckets(){
     try {
         const bucket = minioClient.listBuckets()
@@ -23,7 +23,6 @@ async function listAllBuckets(){
     } catch (err) {
         console.log(err.message)
     }
-
 }
 
 
@@ -39,9 +38,19 @@ async function makeUserSpace(){
     })
 }
 
+async function deleteUserSpace(bucketName){
+    const exists = minioClient.bucketExists(bucketName)
+    exists.then(async function(exist){
+        if (!exist) return console.log('Bucket does not exist!')
+        await minioClient.removeBucket(bucketName)
+    })
 
-// user
-async function uploadToBucket(bucketName, objectName, filePath){
+}
+
+
+// File Operations
+
+async function uploadFile(bucketName, objectName, filePath){
     const exists = minioClient.bucketExists(bucketName)
     exists.then(async function(exist){
         if (!exist) return console.log('Bucket does not exist!')
@@ -52,15 +61,61 @@ async function uploadToBucket(bucketName, objectName, filePath){
 })
 }
 
+async function downloadFile(bucketName, objectName, filePath){
+    minioClient.fGetObject(bucketName, objectName, filePath, function (err) {
+        if (err) return console.log(err)
+        console.log('Download successed!')
+      })
+}
 
-// listAllBuckets()
+
+async function deleteFile(bucketName, objectName){
+    const del = minioClient.removeObject(bucketName, objectName)
+    del.then(() => {
+        console.log('Delete succed!')
+    }).catch((e) => {
+    console.log('error', e)
+})
+}
+
+deleteFile('hello', 'myfolder/iraCodeNerdFont-Light.ttf')
+
+
+async function listAllFiles(bucketName, directory){
+    const data = []
+    const stream = minioClient.listObjects(bucketName, directory, true)
+    stream.on('data', function (obj) {
+        data.push(obj)
+    })
+    stream.on('end', function (obj) {
+        console.log(data)
+        return data
+    })
+    stream.on('error', function (err) {
+        return console.log(err.message)
+    })
+}
+
+async function createFileShareLink(bucketName, fileName, expiry,){
+    minioClient.presignedGetObject(bucketName, fileName, expiry, function (err, presignedUrl) {
+        if (err) return console.log(err.message)
+        console.log(presignedUrl)
+    })
+}
 
 
 module.exports = {
     listAllBuckets,
     makeUserSpace,
-    uploadToBucket
+    deleteUserSpace,
+    listAllFiles,
+    uploadFile,
+    downloadFile,
+    deleteFile,
 }
+
+
+
 
 
   
