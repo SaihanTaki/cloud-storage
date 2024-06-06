@@ -17,34 +17,39 @@
 	// 	"source=${localWorkspaceFolder}/,target=/code,type=bind,consistency=cached"
 	// ],
 
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	// "workspaceFolder": "/code",
-	"overrideCommand": true
+	// "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	"mounts": [
+		"source=${localWorkspaceFolder}/,target=/code,type=bind,consistency=cached"
+	],
+	"workspaceFolder": "/code",
+	"overrideCommand": true,
 
 	
-	// "postCreateCommand": "cat .devcontainer/custom.sh >> ~/.bashrc",
+	"postCreateCommand": "cat .devcontainer/custom.sh >> ~/.bashrc",
 		
 
-	// "features": {
-	// 	"ghcr.io/devcontainers/features/git:1": {},
-	// 	"ghcr.io/devcontainers-contrib/features/curl-apt-get:1": {}
-	// },
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {},
+		"ghcr.io/devcontainers-contrib/features/curl-apt-get:1": {}
+	},
 
 
 
-	// "customizations": {
-	// 	"vscode": {
-	// 		"extensions": [
-	// 			"GitHub.github-vscode-theme",
-	// 			"ms-azuretools.vscode-docker",
-	// 			"ritwickdey.LiveServer",
-	// 			"rangav.vscode-thunder-client"
-	// 		],
-	// 		"settings": {
-	// 			"terminal.integrated.shell.linux": "/bin/bash"
-	// 		}
-	// 	}
-	// }
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"GitHub.github-vscode-theme",
+				"ms-azuretools.vscode-docker",
+				"ritwickdey.LiveServer",
+				"rangav.vscode-thunder-client",
+	         	"ms-python.black-formatter"
+			],
+			"settings": {
+				"terminal.integrated.shell.linux": "/bin/bash"
+			}
+		}
+	}
 
 	// "remoteUser": "root"
 
