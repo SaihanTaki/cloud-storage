@@ -1,13 +1,15 @@
 const Minio = require('minio')
 const {v4:uuidv4} = require('uuid')
+const dotenv = require('dotenv')
+dotenv.config()
 
 
 const minioClient = new Minio.Client({
     endPoint: 'obscontainer',
     port: 9000,
     useSSL: false,
-    accessKey: 'MAf75fy6i1BqTMENKaDr',
-    secretKey: 'dg1GhxfN8otgrs1KinQQ2YcsiQSXyqxGpVkdJiHN',
+    accessKey: process.env.MINIO_ACCESS_KEY,
+    secretKey: process.env.MINIO_SECRET_KEY
   })
 
 
