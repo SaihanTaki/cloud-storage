@@ -1,5 +1,5 @@
 # Cloud Storage
-Cloud storage api using Minio and Express
+Cloud storage api using Minio and ExpressJs
 
 ### Features
 - File Storage
@@ -7,6 +7,5 @@ Cloud storage api using Minio and Express
 <br>
 ....................
 
-**N.B. This project is under development**
 
 
